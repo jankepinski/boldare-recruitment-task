@@ -1,95 +1,65 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+"use client";
+
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { PageButtons } from "@/components/PageButtons";
+import { FiltersInput } from "@/components/FiltersInput";
+import { SortingTypeSelect } from "@/components/SortingTypeSelect";
+import { PeoplePerPageSelect } from "@/components/PeoplePerPageSelect";
+import useSort from "@/hooks/useSort";
+import useFilter from "@/hooks/useFilter";
+import usePaginate from "@/hooks/usePaginate";
+import { People } from "@/components/People";
 
 export default function Home() {
+  const [people, setPeople] = useState([]);
+  const [filterDate, setFilterDate] = useState(null);
+  const [peoplePerPage, setPeoplePerPage] = useState(5);
+  const [page, setPage] = useState(1);
+  const [sortType, setSortType] = useState(null);
+  const [filter, setFilter] = useState({
+    firstName: "",
+    lastName: "",
+    id: "",
+    experience: "",
+    function: "",
+  });
+
+  useEffect(() => {
+    const getPeople = async () => {
+      const res = await axios.get("data/sluzba.json");
+      setPeople(res.data);
+    };
+    getPeople();
+  }, []);
+
+  useEffect(() => {
+    setPeople(useSort(people, sortType));
+  }, [sortType]);
+
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+    <div>
+      <FiltersInput
+        filter={filter}
+        setFilter={setFilter}
+        setPage={setPage}
+        filterDate={filterDate}
+        setFilterDate={setFilterDate}
+      />
+      <SortingTypeSelect setSortType={setSortType} />
+      <PeoplePerPageSelect
+        peoplePerPage={peoplePerPage}
+        setPeoplePerPage={setPeoplePerPage}
+      />
+      <People people={people} page={page} peoplePerPage={peoplePerPage} filter={filter} filterDate={filterDate}/>
+      <PageButtons
+        peopleCount={
+          useFilter({ people: people, filter: filter, filterDate: filterDate })
+            .length
+        }
+        peoplePerPage={peoplePerPage}
+        setPage={setPage}
+      />
+    </div>
+  );
 }
