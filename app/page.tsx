@@ -50,6 +50,7 @@ export default function Home() {
       <PeoplePerPageSelect
         peoplePerPage={peoplePerPage}
         setPeoplePerPage={setPeoplePerPage}
+        setPage={setPage}
       />
       <People people={people} page={page} peoplePerPage={peoplePerPage} filter={filter} filterDate={filterDate}/>
       <PageButtons

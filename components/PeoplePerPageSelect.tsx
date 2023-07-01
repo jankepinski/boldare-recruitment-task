@@ -8,7 +8,7 @@ import {
   Box,
 } from "@mui/material";
 
-export const PeoplePerPageSelect = ({peoplePerPage, setPeoplePerPage}) => {
+export const PeoplePerPageSelect = ({peoplePerPage, setPeoplePerPage, setPage}) => {
   return (
     <div>
       <Typography>People Per Page:</Typography>
@@ -17,7 +17,7 @@ export const PeoplePerPageSelect = ({peoplePerPage, setPeoplePerPage}) => {
         id="demo-simple-select"
         value={peoplePerPage}
         label="People Per Page"
-        onChange={(e) => setPeoplePerPage(e.target.value)}
+        onChange={(e) => {setPeoplePerPage(e.target.value); setPage(1);}}
       >
         <MenuItem value={3}>3</MenuItem>
         <MenuItem value={5}>5</MenuItem>
