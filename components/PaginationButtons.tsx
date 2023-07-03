@@ -1,12 +1,17 @@
 import React from "react";
-import { ButtonGroup, Button, Typography } from "@mui/material";
+import { ButtonGroup, Button } from "@mui/material";
 
-export const PageButtons = ({ peopleCount, peoplePerPage, setPage }) => {
-  let pageCount = Math.ceil(peopleCount / peoplePerPage);
+interface PaginationButtonsArguments{
+  itemCount: number;
+  itemsPerPage: number;
+  setPage: React.Dispatch<React.SetStateAction<number>>
+}
+
+export const PaginationButtons = ({ itemCount, itemsPerPage, setPage }: PaginationButtonsArguments) => {
+  let pageCount = Math.ceil(itemCount / itemsPerPage);
 
   return (
-    <div>
-      <Typography>Page:</Typography>
+    <div style={{float: "right"}}>
       <ButtonGroup>
         {(() => {
           let btnArr = [];

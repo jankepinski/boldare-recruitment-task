@@ -1,0 +1,9 @@
+[
+  { "value": "firstName", "label": "First Name (Alphabetically)" },
+  { "value": "lastName", "label": "Last Name (Alphabetically)" },
+  { "value": "function", "label": "Function (Alphabetically)" },
+  { "value": "experienceAscending", "label": "Experience (Ascending)" },
+  { "value": "experienceDescending", "label": "Experience (Descending)" },
+  { "value": "dateOfBirthAscending", "label": "Birth Date (Ascending)" },
+  { "value": "dateOfBirthDescending", "label": "Birth Date (Descending)" }
+]
