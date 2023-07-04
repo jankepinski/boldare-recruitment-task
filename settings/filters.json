@@ -1,8 +1,0 @@
-[
-  { "property": "firstName", "label": "First Name" },
-  { "property": "lastName", "label": "Last Name" },
-  { "property": "function", "label": "Function" },
-  { "property": "id", "label": "ID" },
-  { "property": "experienceMin", "label": "Experience Min" },
-  { "property": "experienceMax", "label": "Experience Max" }
-]

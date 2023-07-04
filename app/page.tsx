@@ -6,32 +6,44 @@ import { FiltersInput } from "@/components/FiltersInput";
 import { Selector } from "@/components/Selector";
 import sortPeople from "@/helpers/sortPeople";
 import filterPeople from "@/helpers/filterPeople";
+import { PeopleTable } from "@/components/PeopleTable";
 import { Pagination } from "@/components/Pagination";
-import _sortingOptions from "@/settings/sorting-options.json";
-import _paginationOptions from "@/settings/pagination-options.json";
-import { Filter, FilterPerson, Option, Person } from "@/helpers/customTypes";
-import _filters from "@/settings/filters.json";
+import { Filter, Option, Person } from "@/helpers/types";
+import { Box } from "@mui/material";
 
-const sortingOptions = _sortingOptions as Option[];
-const paginationOptions = _paginationOptions as Option[];
-const filters = _filters as Filter[];
+const sortingOptions: Option[] = [
+  { value: "firstName", label: "First Name (Alphabetically)" },
+  { value: "lastName", label: "Last Name (Alphabetically)" },
+  { value: "function", label: "Function (Alphabetically)" },
+  { value: "experienceAscending", label: "Experience (Ascending)" },
+  { value: "experienceDescending", label: "Experience (Descending)" },
+  { value: "dateOfBirthAscending", label: "Birth Date (Ascending)" },
+  { value: "dateOfBirthDescending", label: "Birth Date (Descending)" },
+];
+
+const paginationOptions: Option[] = [
+  { value: "3", label: "3" },
+  { value: "5", label: "5" },
+  { value: "7", label: "7" },
+  { value: "10", label: "10" },
+];
 
 export default function App() {
   const [people, setPeople] = useState<Person[] | undefined>();
+  const [displayPeople, setDisplayPeople] = useState<Person[] | undefined>();
   const [peoplePerPage, setPeoplePerPage] = useState<number>(5);
   const [page, setPage] = useState<number>(1);
   const [sortType, setSortType] = useState<string>("");
-  const [filter, setFilter] = useState<FilterPerson>({
+  const [filter, setFilter] = useState<Filter>({
     firstName: "",
     lastName: "",
-    id: "",
-    experienceMin: "",
-    experienceMax: "",
+    id: null,
+    experienceMin: null,
+    experienceMax: null,
     function: "",
     dateOfBirthMin: null,
     dateOfBirthMax: null,
   });
-
 
   //request json of all people
   useEffect(() => {
@@ -40,14 +52,21 @@ export default function App() {
       setPeople(res.data as Person[]);
     };
     getPeople();
-  }, []);
+  }, [setPeople]);
 
-  //sort the array of people whenever sort type changes
+  //set DisplayPeople
+  useEffect(() => {
+    if (people != undefined) {
+      setDisplayPeople(people);
+    }
+  }, [people, setDisplayPeople]);
+
+  //sort and filter the array of people whenever sort type and filter changes
   useEffect(() => {
     if (people !== undefined) {
-      setPeople(sortPeople(people, sortType));
+      setDisplayPeople(filterPeople(sortPeople(people, sortType), filter));
     }
-  }, [sortType]);
+  }, [sortType, people, setDisplayPeople, filter]);
 
   //reset page to first whenever the view changes
   useEffect(() => {
@@ -55,71 +74,42 @@ export default function App() {
   }, [sortType, filter, peoplePerPage]);
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "90vh",
-      }}
-    >
-      <div style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        gap: "1vw",
-      }}>
-        <FiltersInput
-          filter={filter}
-          setFilter={setFilter}
-          setPage={setPage}
-          filters={filters}
-        />
-        <div
-          style={{
-            width: "30vw",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              width: "100%",
-              alignItems: "center",
-              justifyContent: "flex-start",
-            }}
-          >
-            <Selector
-              width="100%"
-              maxWidth="15vw"
-              label="Sort By:"
-              options={sortingOptions}
-              controlledValue={sortType}
-              valueSetter={setSortType}
-            />
-            <Selector
-              width="100%"
-              maxWidth="15vw"
-              label="People Per Page"
-              options={paginationOptions}
-              controlledValue={peoplePerPage}
-              valueSetter={setPeoplePerPage}
-            />
-          </div>
-          {people === undefined ? (
-            <div />
-          ) : (
-            <Pagination
+    <Box display="flex" justifyContent="center" gap="1vw">
+      <FiltersInput filter={filter} setFilter={setFilter} setPage={setPage} />
+      <Box display="flex" width="30vw" flexDirection="column">
+        <Box display="flex">
+          <Selector
+            label="Sort By:"
+            options={sortingOptions}
+            controlledValue={sortType}
+            valueSetter={setSortType}
+          />
+          <Selector
+            label="People Per Page"
+            options={paginationOptions}
+            controlledValue={peoplePerPage}
+            valueSetter={setPeoplePerPage}
+          />
+        </Box>
+        {displayPeople === undefined ? (
+          <Box />
+        ) : (
+          <Box>
+            <PeopleTable
               page={page}
-              itemsPerPage={peoplePerPage}
-              itemsToPaginate={filterPeople(people, filter)}
+              peoplePerPage={peoplePerPage}
+              people={displayPeople}
               setPage={setPage}
             />
-          )}
-        </div>
-      </div>
-    </div>
+            <Pagination
+              itemCount={displayPeople.length}
+              itemsPerPage={peoplePerPage}
+              setPage={setPage}
+              page={page}
+            />
+          </Box>
+        )}
+      </Box>
+    </Box>
   );
 }

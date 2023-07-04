@@ -1,12 +1,7 @@
 import { Dayjs } from "dayjs";
 
 export interface Option {
-    value: number | string;
-    label: string;
-  }
-
-export interface Filter{
-  property: string;
+  value: number | string;
   label: string;
 }
 
@@ -19,14 +14,14 @@ export interface Person {
   experience?: number | undefined;
 }
 
-export interface FilterPerson {
-  id: string;
+export interface Filter {
+  id: number | null;
   firstName: string;
   lastName: string;
   dateOfBirthMin: null | Dayjs;
   dateOfBirthMax: null | Dayjs;
   function: string;
-  experienceMin: string;
-  experienceMax: string;
+  experienceMin: number | null;
+  experienceMax: number | null;
   [key: string]: any;
 }

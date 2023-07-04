@@ -1,58 +1,111 @@
 import React from "react";
-import { TextField, Button, Typography } from "@mui/material";
+import { TextField, Button, Box } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import { Filter, FilterPerson } from "@/helpers/customTypes";
+import { Filter } from "@/helpers/types";
 
 interface FiltersInputArguments {
-  filter: FilterPerson;
-  setFilter: React.Dispatch<React.SetStateAction<FilterPerson>>;
+  filter: Filter;
+  setFilter: React.Dispatch<React.SetStateAction<Filter>>;
   setPage: React.Dispatch<React.SetStateAction<number>>;
-  filters: Filter[];
 }
+
+const fullWidthStyle = {
+  marginTop: "1vh",
+  width: "100%",
+};
+
+const halfWidthStyle = {
+  marginTop: "1vh",
+  width: "50%",
+};
 
 export const FiltersInput = ({
   filter,
   setFilter,
   setPage,
-  filters,
 }: FiltersInputArguments) => {
   return (
-    <div style={{ width: "30vw" }}>
-      <Typography>Filter by:</Typography>
-      {filters.map((f: Filter, i: number) => {
-        return (
-          <TextField
-            sx={{
-              marginTop: "1vh",
-              width:
-                f.property === "experienceMin" || f.property === "experienceMax"
-                  ? "50%"
-                  : "100%",
-            }}
-            type={
-              f.property === "experienceMin" ||
-              f.property === "experienceMax" ||
-              f.property === "id"
-                ? "number"
-                : "text"
-            }
-            inputProps={{ min: 0, max: 12 }}
-            key={i}
-            label={f.label}
-            value={filter[f.property]}
-            onChange={(e) => {
-              setFilter({ ...filter, [f.property]: e.target.value });
-              setPage(1);
-            }}
-          />
-        );
-      })}
+    <Box width="30vw">
+      <TextField
+        sx={fullWidthStyle}
+        type="text"
+        label="First Name"
+        value={filter.firstName}
+        onChange={(e) => {
+          setFilter({ ...filter, firstName: e.target.value });
+          setPage(1);
+        }}
+      />
+      <TextField
+        sx={fullWidthStyle}
+        type="text"
+        label="Last Name"
+        value={filter.lastName}
+        onChange={(e) => {
+          setFilter({ ...filter, lastName: e.target.value });
+          setPage(1);
+        }}
+      />
+      <TextField
+        sx={fullWidthStyle}
+        type="text"
+        label="Function"
+        value={filter.function}
+        onChange={(e) => {
+          setFilter({ ...filter, function: e.target.value });
+          setPage(1);
+        }}
+      />
+      <TextField
+        sx={fullWidthStyle}
+        type="number"
+        inputProps={{ min: 0 }}
+        label="ID"
+        value={filter.id ?? ""}
+        onChange={(e) => {
+          setFilter({
+            ...filter,
+            id: e.target.value === "" ? null : parseInt(e.target.value),
+          });
+          setPage(1);
+        }}
+      />
+      <TextField
+        sx={halfWidthStyle}
+        type="number"
+        inputProps={{ min: 0 }}
+        label="Experience Min"
+        value={filter.experienceMin ?? ""}
+        onChange={(e) => {
+          setFilter({
+            ...filter,
+            experienceMin:
+              e.target.value === "" ? null : parseInt(e.target.value),
+          });
+          setPage(1);
+        }}
+      />
+      <TextField
+        sx={halfWidthStyle}
+        type="number"
+        inputProps={{ min: 0 }}
+        label="Experience Max"
+        value={filter.experienceMax ?? ""}
+        onChange={(e) => {
+          setFilter({
+            ...filter,
+            experienceMax:
+              e.target.value === "" ? null : parseInt(e.target.value),
+          });
+          setPage(1);
+        }}
+      />
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DatePicker
-          slotProps={{ textField: { sx: { marginTop: "1vh", width: "50%" } } }}
+          slotProps={{ textField: { sx: halfWidthStyle } }}
           label="Birth Date Min"
           value={filter.dateOfBirthMin}
           onChange={(newDate) => {
@@ -62,7 +115,7 @@ export const FiltersInput = ({
           format="DD/MM/YYYY"
         />
         <DatePicker
-          slotProps={{ textField: { sx: { marginTop: "1vh", width: "50%" } } }}
+          slotProps={{ textField: { sx: halfWidthStyle } }}
           label="Birth Date Max"
           value={filter.dateOfBirthMax}
           onChange={(newDate) => {
@@ -73,7 +126,7 @@ export const FiltersInput = ({
         />
       </LocalizationProvider>
       <Button
-        sx={{ marginTop: "1vh", width: "100%" }}
+        sx={fullWidthStyle}
         variant="contained"
         onClick={() =>
           setFilter({ ...filter, dateOfBirthMin: null, dateOfBirthMax: null })
@@ -82,15 +135,15 @@ export const FiltersInput = ({
         clear date
       </Button>
       <Button
-        sx={{ marginTop: "1vh", width: "100%" }}
+        sx={fullWidthStyle}
         variant="contained"
         onClick={() =>
           setFilter({
             firstName: "",
             lastName: "",
-            id: "",
-            experienceMin: "",
-            experienceMax: "",
+            id: null,
+            experienceMin: null,
+            experienceMax: null,
             function: "",
             dateOfBirthMin: null,
             dateOfBirthMax: null,
@@ -100,6 +153,6 @@ export const FiltersInput = ({
       >
         clear filters
       </Button>
-    </div>
+    </Box>
   );
 };

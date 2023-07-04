@@ -1,67 +1,37 @@
 import React from "react";
-import paginate from "@/helpers/paginate";
-import { PaginationButtons } from "./PaginationButtons";
-import { Person } from "@/helpers/customTypes";
-import {
-  Paper,
-  TableContainer,
-  TableHead,
-  Table,
-  TableRow,
-  TableCell,
-  TableBody,
-} from "@mui/material";
-import dayjs from "dayjs";
+import { ToggleButtonGroup, ToggleButton } from "@mui/material";
 
 interface PaginationArguments {
-  page: number;
+  itemCount: number;
   itemsPerPage: number;
-  itemsToPaginate: Person[];
   setPage: React.Dispatch<React.SetStateAction<number>>;
+  page: number;
 }
 
 export const Pagination = ({
-  page,
+  itemCount,
   itemsPerPage,
-  itemsToPaginate,
   setPage,
+  page,
 }: PaginationArguments) => {
+  let pageCount = Math.ceil(itemCount / itemsPerPage);
+
   return (
-    <div>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 300 }}>
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell align="right">Function</TableCell>
-              <TableCell align="right">Experience</TableCell>
-              <TableCell align="right">Birth Date</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {paginate(itemsToPaginate, page, itemsPerPage).map(
-              (person: Person) => (
-                <TableRow
-                  key={person.id}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                >
-                  <TableCell component="th" scope="row">
-                    {`${person.firstName} ${person.lastName}`}
-                  </TableCell>
-                  <TableCell align="right">{person.function}</TableCell>
-                  <TableCell align="right">{person.experience === undefined ? "none" : person.experience}</TableCell>
-                  <TableCell align="right">{dayjs(person.dateOfBirth, 'D-M-YYYY HH:mm').format("DD.MM.YYYY HH:mm")}</TableCell>
-                </TableRow>
-              )
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <PaginationButtons
-        itemCount={itemsToPaginate.length}
-        itemsPerPage={itemsPerPage}
-        setPage={setPage}
-      />
+    <div style={{ float: "right" }}>
+      <ToggleButtonGroup
+        color="primary"
+        exclusive
+        value={page}
+        onChange={(event: React.MouseEvent<HTMLElement>, value: number) => {
+          setPage(value ?? page);
+        }}
+      >
+        {new Array(pageCount).fill(0).map((_, i: number) => (
+          <ToggleButton key={i + 1} value={i + 1}>
+            {i + 1}
+          </ToggleButton>
+        ))}
+      </ToggleButtonGroup>
     </div>
   );
 };
